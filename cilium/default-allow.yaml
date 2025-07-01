@@ -1,0 +1,32 @@
+---
+apiVersion: "cilium.io/v2"
+kind: CiliumNetworkPolicy
+metadata:
+  name: default-allow
+  namespace: app
+spec:
+  endpointSelector: {}             # Apply this policy to all Pods in Namespace team-orange 
+  egress:                       # ALLOW egress to all Pods in Namespace team-orange
+  - toEndpoints:
+      - matchLabels:
+          io.kubernetes.pod.namespace: kube-system
+          k8s-app: kube-dns
+  ingress:
+  - fromEndpoints:
+    - {}
+---
+apiVersion: "cilium.io/v2"
+kind: CiliumNetworkPolicy
+metadata:
+  name: default-allow
+  namespace: data
+spec:
+  endpointSelector: {}             # Apply this policy to all Pods in Namespace team-orange 
+  egress:                       # ALLOW egress to all Pods in Namespace team-orange
+  - toEndpoints:
+      - matchLabels:
+          io.kubernetes.pod.namespace: kube-system
+          k8s-app: kube-dns
+  ingress:
+  - fromEndpoints:
+    - {}
