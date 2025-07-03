@@ -13,6 +13,12 @@ spec:
       - matchLabels:
           io.kubernetes.pod.namespace: kube-system
           k8s-app: kube-dns
+    toPorts:
+    - ports:
+      - port: "53"
+        protocol: TCP
+      - port: "53"
+        protocol: TCP
   ingress:
   - fromEndpoints:
     - {}
@@ -31,6 +37,12 @@ spec:
       - matchLabels:
           io.kubernetes.pod.namespace: kube-system
           k8s-app: kube-dns
+    toPorts:
+    - ports:
+      - port: "53"
+        protocol: TCP
+      - port: "53"
+        protocol: TCP
   ingress:
   - fromEndpoints:
     - {}

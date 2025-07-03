@@ -1,0 +1,96 @@
+# Create a Layer 3 policy named p1 to:
+# Deny outgoing traffic from Pods with label type=messenger to Pods behind Service database
+apiVersion: "cilium.io/v2"
+kind: CiliumNetworkPolicy
+metadata:
+  name: p1
+  namespace: app
+spec:
+  endpointSelector:
+    matchLabels:
+      id: app
+  egressDeny:
+  - toEndpoints:
+    - matchLabels:
+        id: manager
+---
+#Create a Layer 4 policy named p2 to:
+#Deny outgoing ICMP traffic from Deployment transmitter to Pods behind Service database
+apiVersion: "cilium.io/v2"
+kind: CiliumNetworkPolicy
+metadata:
+  name: "p2"
+spec:
+  endpointSelector:
+    matchLabels:
+      id: app
+  egressDeny:
+  - toEndpoints:
+    - matchLabels:
+        id: controller
+    toPorts:
+    - ports:
+      - port: "80"
+        protocol: TCP
+---
+#Create a Layer 3 policy named p3 to:
+#Enable Mutual Authentication for outgoing traffic from Pods with label type=database to Pods with label type=messenger
+apiVersion: "cilium.io/v2"
+kind: CiliumNetworkPolicy
+metadata:
+  name: p3
+  namespace: team-orange
+spec:
+  endpointSelector:
+    matchLabels:
+      type: database
+  egress:
+  - toEndpoints:
+    - matchLabels:
+        type: messenger
+    authentication:
+      mode: "required"
+---
+## Create a layer 4 policy from Pods with label id=app in namespace app to pod with label id=data in namespace data only for port 80
+# This is a cross namespace policy and consists of 2 policy:
+# - for the egress traffic in the origin ns
+# - for the ingress traffic in the destination ns
+#
+# egress policy assigned to origin pods
+apiVersion: "cilium.io/v2"
+kind: CiliumNetworkPolicy
+metadata:
+  name: p2
+  namespace: app
+spec:
+  endpointSelector:
+    matchLabels:
+      id: app
+  egress:
+  - toEndpoints:
+    - matchLabels:
+        io.kubernetes.pod.namespace: data
+        id: data
+    toPorts:
+      - ports:
+          - port: "80"
+---
+# ingress policy assigned to destination pods
+apiVersion: "cilium.io/v2"
+kind: CiliumNetworkPolicy
+metadata:
+  name: p2
+  namespace: data
+spec:
+  endpointSelector:
+    matchLabels:
+      id: data
+  ingress:
+  - fromEndpoints:
+    - matchLabels:
+        io.kubernetes.pod.namespace: app
+        id: app
+    toPorts:
+      - ports:
+          - port: "80"
+---

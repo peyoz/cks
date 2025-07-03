@@ -5,6 +5,9 @@ kubectl -n app run app1 --image=nginx:alpine -l id=app
 kubectl -n app run app2 --image=nginx:alpine -l id=app
 kubectl -n app run manager1 --image=nginx:alpine -l id=manager
 kubectl -n app run manager2 --image=nginx:alpine -l id=manager
+kubectl -n app run controller1 --image=nginx:alpine -l id=controller
+kubectl -n app run controller2 --image=nginx:alpine -l id=controller
+
 
 kubectl create ns data
 kubectl -n data run data-001 --image=nginx:alpine -l id=data
@@ -17,6 +20,7 @@ kubectl wait -n data --for=condition=ready pod --all --timeout 30s
 
 k expose pod -n app app1 --type=ClusterIP --port=80 --protocol=TCP --name app
 k expose pod -n app manager1 --type=ClusterIP --port=80 --protocol=TCP --name manager
+k expose pod -n app controller1 --type=ClusterIP --port=80 --protocol=TCP --name controller
 
 k expose pod -n data data-001 --type=ClusterIP --port=80 --protocol=TCP --name data
 k expose pod -n data processor-a100 --type=ClusterIP --port=80 --protocol=TCP --name processor
