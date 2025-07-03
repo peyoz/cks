@@ -18,12 +18,12 @@ kubectl -n data run processor-a200 --image=nginx:alpine -l id=processor
 kubectl wait -n app --for=condition=ready pod --all --timeout 30s
 kubectl wait -n data --for=condition=ready pod --all --timeout 30s
 
-k expose pod -n app app1 --type=ClusterIP --port=80 --protocol=TCP --name app
-k expose pod -n app manager1 --type=ClusterIP --port=80 --protocol=TCP --name manager
-k expose pod -n app controller1 --type=ClusterIP --port=80 --protocol=TCP --name controller
+kubectl expose pod -n app app1 --type=ClusterIP --port=80 --protocol=TCP --name app
+kubectl expose pod -n app manager1 --type=ClusterIP --port=80 --protocol=TCP --name manager
+kubectl expose pod -n app controller1 --type=ClusterIP --port=80 --protocol=TCP --name controller
+kubectl expose pod -n data data-001 --type=ClusterIP --port=80 --protocol=TCP --name data
+kubectl expose pod -n data processor-a100 --type=ClusterIP --port=80 --protocol=TCP --name processor
 
-k expose pod -n data data-001 --type=ClusterIP --port=80 --protocol=TCP --name data
-k expose pod -n data processor-a100 --type=ClusterIP --port=80 --protocol=TCP --name processor
 echo
 echo Pods in Namespace app
 kubectl -n app get pod -o wide --show-labels | sed 's/NOMINATED NODE/NOMINATED_NODE/g' | sed 's/READINESS GATES/READINESS_GATES/g' | awk '{print $1,$3,$5,$6,$10}' | column -t
