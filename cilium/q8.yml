@@ -73,7 +73,8 @@ spec:
         id: data
     toPorts:
       - ports:
-          - port: "80"
+          - port: "80"   # String  :S
+            endPort: 81  # Integer :(
 ---
 # ingress policy assigned to destination pods
 apiVersion: "cilium.io/v2"
